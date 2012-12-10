@@ -148,6 +148,14 @@ Currently, tint color for control is not complete, but just a rough implementati
 
     appSettingsViewController.globalTintColor = [UIColor redColor];
 
+If you push the the settings into navigation controller, and tinted the color, and you want a different color for main view controller, then, you may have to reset the navigation bar color for main view:
+
+    - (void)viewWillAppear:(BOOL)animated {
+        [super viewWillAppear:animated];
+        self.navigationController.navigationBar.tintColor = nil;
+    }
+
+The global tint color now only affect `UINavigationBar`'s `tintColor`, `UISlider`'s `minimumTrackTintColor` and `UISwitch`'s `onTintColor` property. The other elements are not affected.
 
 Icons
 -----
