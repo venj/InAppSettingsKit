@@ -32,6 +32,11 @@
 
 @synthesize appSettingsViewController, tabAppSettingsViewController;
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.tintColor = nil;
+}
+
 - (IASKAppSettingsViewController*)appSettingsViewController {
 	if (!appSettingsViewController) {
 		appSettingsViewController = [[IASKAppSettingsViewController alloc] init];
@@ -56,6 +61,18 @@
     self.appSettingsViewController.showDoneButton = YES;
     [self presentModalViewController:aNavController animated:YES];
     [aNavController release];
+}
+
+- (IBAction)showTintSettingsPush:(id)sender {
+	//[viewController setShowCreditsFooter:NO];   // Uncomment to not display InAppSettingsKit credits for creators.
+	// But we encourage you no to uncomment. Thank you!
+    IASKAppSettingsViewController *settingsController = [[IASKAppSettingsViewController alloc] init];
+	settingsController.showDoneButton = NO;
+    settingsController.delegate = self;
+    BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"AutoConnect"];
+    settingsController.hiddenKeys = enabled ? nil : [NSSet setWithObjects:@"AutoConnectLogin", @"AutoConnectPassword", nil];
+    settingsController.globalTintColor = [UIColor orangeColor];
+	[self.navigationController pushViewController:settingsController animated:YES];
 }
 
 - (void)showSettingsPopover:(id)sender {

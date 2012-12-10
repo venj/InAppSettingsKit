@@ -74,6 +74,8 @@
     BOOL                    _showDoneButton;
 	
     NSSet                   *_hiddenKeys;
+    
+    UIColor                 *_globalTintColor;
 }
 
 @property (nonatomic, assign) IBOutlet id delegate;
@@ -81,6 +83,7 @@
 @property (nonatomic, assign) BOOL showCreditsFooter;
 @property (nonatomic, assign) BOOL showDoneButton;
 @property (nonatomic, retain) NSSet *hiddenKeys;
+@property (nonatomic, retain) UIColor *globalTintColor;
 
 - (void)synchronizeSettings;
 - (void)dismiss:(id)sender;

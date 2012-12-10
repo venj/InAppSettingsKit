@@ -27,5 +27,6 @@
 
 - (IBAction)showSettingsPush:(id)sender;
 - (IBAction)showSettingsModal:(id)sender;
+- (IBAction)showTintSettingsPush:(id)sender;
 
 @end

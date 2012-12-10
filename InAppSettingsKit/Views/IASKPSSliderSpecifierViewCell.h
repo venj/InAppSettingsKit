@@ -22,10 +22,12 @@
     IASKSlider *_slider;
     UIImageView *_minImage;
     UIImageView *_maxImage;
+    UIColor *_sliderTintColor;
 }
 
 @property (nonatomic, assign) IASKSlider *slider;
 @property (nonatomic, assign) UIImageView *minImage;
 @property (nonatomic, assign) UIImageView *maxImage;
+@property (nonatomic, retain) UIColor *sliderTintColor;
 
 @end

@@ -22,7 +22,8 @@
 
 @synthesize slider=_slider, 
             minImage=_minImage, 
-            maxImage=_maxImage;
+            maxImage=_maxImage,
+            sliderTintColor=_sliderTintColor;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -51,6 +52,13 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
+}
+
+- (void)setSliderTintColor:(UIColor *)sliderTintColor {
+    [_sliderTintColor autorelease];
+    _sliderTintColor = [sliderTintColor retain];
+    if ([self.slider respondsToSelector:@selector(setMinimumTrackTintColor:)] && sliderTintColor != nil)
+        [self.slider setMinimumTrackTintColor:sliderTintColor];
 }
 
 - (void)layoutSubviews {

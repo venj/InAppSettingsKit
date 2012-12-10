@@ -61,6 +61,7 @@ CGRect IASKCGRectSwap(CGRect rect);
 @synthesize showDoneButton = _showDoneButton;
 @synthesize settingsStore = _settingsStore;
 @synthesize hiddenKeys = _hiddenKeys;
+@synthesize globalTintColor = _globalTintColor;
 
 #pragma mark accessors
 - (IASKSettingsReader*)settingsReader {
@@ -194,6 +195,7 @@ CGRect IASKCGRectSwap(CGRect rect);
 												   object:[NSUserDefaults standardUserDefaults]];
 		[self userDefaultsDidChange]; // force update in case of changes while we were hidden
 	}
+    self.navigationController.navigationBar.tintColor = self.globalTintColor;
 	[super viewWillAppear:animated];
 }
 
@@ -332,6 +334,7 @@ CGRect IASKCGRectSwap(CGRect rect);
 	[_settingsReader release], _settingsReader = nil;
     [_settingsStore release], _settingsStore = nil;
     [_hiddenKeys release], _hiddenKeys = nil;
+    [_globalTintColor release], _globalTintColor = nil;
 	
 	_delegate = nil;
 
@@ -467,8 +470,11 @@ CGRect IASKCGRectSwap(CGRect rect);
 	UITableViewCell *cell = nil;
 	if ([identifier isEqualToString:kIASKPSToggleSwitchSpecifier]) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kIASKPSToggleSwitchSpecifier];
-		cell.accessoryView = [[[IASKSwitch alloc] initWithFrame:CGRectMake(0, 0, 79, 27)] autorelease];
-		[((IASKSwitch*)cell.accessoryView) addTarget:self action:@selector(toggledValue:) forControlEvents:UIControlEventValueChanged];
+        IASKSwitch *aSwitch = [[[IASKSwitch alloc] initWithFrame:CGRectMake(0, 0, 79, 27)] autorelease];
+        if ([aSwitch respondsToSelector:@selector(setOnTintColor:)] && self.globalTintColor != nil)
+            [aSwitch setOnTintColor:self.globalTintColor];
+		cell.accessoryView = aSwitch;
+		[aSwitch addTarget:self action:@selector(toggledValue:) forControlEvents:UIControlEventValueChanged];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 	else if ([identifier isEqualToString:kIASKPSMultiValueSpecifier] || [identifier isEqualToString:kIASKPSTitleValueSpecifier]) {
@@ -481,6 +487,7 @@ CGRect IASKCGRectSwap(CGRect rect);
 	}
 	else if ([identifier isEqualToString:kIASKPSSliderSpecifier]) {
         cell = [[IASKPSSliderSpecifierViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kIASKPSSliderSpecifier];
+        [(IASKPSSliderSpecifierViewCell *)cell setSliderTintColor:self.globalTintColor];
 	} else if ([identifier isEqualToString:kIASKPSChildPaneSpecifier]) {
 		cell = [[IASKPSTitleValueSpecifierViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -676,6 +683,9 @@ CGRect IASKCGRectSwap(CGRect rect);
 			if ([vc respondsToSelector:@selector(setSettingsStore:)]) {
 				[vc performSelector:@selector(setSettingsStore:) withObject:self.settingsStore];
 			}
+            if ([vc respondsToSelector:@selector(setGlobalTintColor:)]) {
+				[vc performSelector:@selector(setGlobalTintColor:) withObject:self.globalTintColor];
+			}
             [self.navigationController pushViewController:vc animated:YES];
             [vc performSelector:@selector(release)];
             return;
@@ -698,6 +708,7 @@ CGRect IASKCGRectSwap(CGRect rect);
 			targetViewController.showDoneButton = NO;
 			targetViewController.settingsStore = self.settingsStore; 
 			targetViewController.delegate = self.delegate;
+            targetViewController.globalTintColor = self.globalTintColor;
 
             // add the new view controller to the dictionary and then to the 'viewList' array
             [newItemDict setObject:targetViewController forKey:@"viewController"];
@@ -738,7 +749,7 @@ CGRect IASKCGRectSwap(CGRect rect);
         if ([MFMailComposeViewController canSendMail]) {
             MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
             mailViewController.navigationBar.barStyle = self.navigationController.navigationBar.barStyle;
-			mailViewController.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;
+			mailViewController.navigationBar.tintColor = self.globalTintColor;
 			
             if ([specifier localizedObjectForKey:kIASKMailComposeSubject]) {
                 [mailViewController setSubject:[specifier localizedObjectForKey:kIASKMailComposeSubject]];
